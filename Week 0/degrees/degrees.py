@@ -103,16 +103,22 @@ def shortest_path(source, target):
     frontier.add(Node(source, None, None))
 
     found = False
+    # Using a breadth-first search
     while not frontier.empty():
         cur = frontier.remove()
+        # Every time a new star is encounterd, it is added into discovered so that 
+        # I can prevent repetition
         discovered.add(cur.state)
         for movie in movies:
+            # Find the movies that this star has casted before
             if cur.state in movies[movie]['stars']:
                 for star in movies[movie]['stars']:
+                    # If the movie also has the target, then the search is done
                     if star == target:
                         found = True
                         end_node = Node(star, cur, movie)
                         break
+                    # Add the star that is not discovered yet
                     if star not in discovered:
                         frontier.add(Node(star, cur, movie))
                 if found:
@@ -120,12 +126,13 @@ def shortest_path(source, target):
 
         if found:
             break
-
+    # Backtracking to find the path
     if found:
         res = []
         while end_node.parent is not None:
             res.append((end_node.action, end_node.state))
             end_node = end_node.parent
+        # Reverse it because the path is from target
         return res[::-1]
 
     return None
